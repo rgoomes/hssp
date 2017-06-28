@@ -1,0 +1,14 @@
+# -*- Makefile-gmake -*-
+VARIANT    ?= 4
+
+HV_SRCS    = hv-plus.c hvc.c hvc-class.c examples.c
+HV_HDRS    = hv-plus.h hvc.h hvc-class.h examples.h hvc-private.h
+HV_OBJS    = $(HV_SRCS:.c=.o)
+HV_LIB     = hvc.a
+
+$(HV_LIB): $(HV_OBJS)
+	$(QUIET_AR)$(RM) $@ && $(AR) rcs $@ $^
+
+
+## Dependencies:
+$(HV_OBJS): $(HV_HDRS)

@@ -1,0 +1,15 @@
+# Objects
+*.o
+*.out
+src/hvsubset
+src/HVC/hvc
+src/HVC/hvc-examples
+src/HVC/hvc.a
+src/hv-2.0rc2-src/fpli_hv.a
+src/hv-2.0rc2-src/hv
+
+# Backup files
+*~
+
+# Other
+svn_version

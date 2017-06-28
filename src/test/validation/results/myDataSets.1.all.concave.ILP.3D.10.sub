@@ -1,0 +1,12 @@
+#file: ../../data/normalizedDataSets/3D/nondominated/myDataSets/myDataSets.1/all/concave/concave.1s.3d.10.dat
+#p1, p2, ..., pn
+1 0 0 0 0 0 0 0 0 0
+1 0 0 0 0 0 1 0 0 0
+1 1 0 0 0 0 1 0 0 0
+1 1 0 0 0 0 1 0 0 1
+1 1 0 0 0 1 1 0 0 1
+1 1 1 0 0 1 1 0 0 1
+1 1 1 0 0 1 1 1 0 1
+1 1 1 1 0 1 1 0 1 1
+1 1 1 1 0 1 1 1 1 1
+1 1 1 1 1 1 1 1 1 1
