@@ -306,7 +306,7 @@ void restore_current(double *Ce, double *cur_point, int cur_pos, hvc_s *full, Pr
 	assert_with_log(false, "failed to find the contribution");
 }
 
-void swap_next(Point *S, double *C, double *Cr, int pos1, int pos2, Problem *P){
+void swap_next(Point *S, double *C, double *Ce, double *Cr, int pos1, int pos2, Problem *P){
 	if(pos1 >= P->n || pos2 >= P->n)
 		return;
 
@@ -314,6 +314,8 @@ void swap_next(Point *S, double *C, double *Cr, int pos1, int pos2, Problem *P){
 	std::iter_swap(S+pos1, S+pos2);
 	// swap hypervolume contributions
 	std::iter_swap(C+pos1, C+pos2);
+	// swap exclusive hypervolume contributions
+	std::iter_swap(Ce+pos1, Ce+pos2);
 	// swap root exclusive hypervolume contributions
 	std::iter_swap(Cr+pos1, Cr+pos2);
 }
@@ -332,7 +334,7 @@ void branch(Point *cur, Point *end, Point *subset, Point *aux1, Point *S, double
 #endif
 
 	if(subset_size == P->k){
-		// guard invalidating a new best solutions when two or more are found at the same time
+		// guard invalidating new best solutions when two or more are found at the same time
 		std::lock_guard<std::mutex> lg(P->solution_mtx);
 
 		if(hv > P->best){
@@ -384,14 +386,14 @@ void branch(Point *cur, Point *end, Point *subset, Point *aux1, Point *S, double
 	const int ignore_pos = next_pos + argmax(Cb+next_pos, points_left - 1);
 
 	if(P->cores > 1 && pool && pool->working() < P->cores && P->best > 0.0 && subset_size > 0){
-		swap_next(S, C, Cr, next_pos, accept_pos, P);
+		swap_next(S, C, Ce, Cr, next_pos, accept_pos, P);
 		pool->schedule(S, subset, C, Ce, Cr, hv + C[cur_pos], ubound1, next_pos, subset_size+1, true);
-		swap_next(S, C, Cr, next_pos, accept_pos, P);
+		swap_next(S, C, Ce, Cr, next_pos, accept_pos, P);
 	}
 	else {
-		swap_next(S, C, Cr, next_pos, accept_pos, P);
+		swap_next(S, C, Ce, Cr, next_pos, accept_pos, P);
 		branch(cur+1, end+1, subset, aux1, S, C, Ce, Cr, aux2, true, hv + C[cur_pos], ubound1, id, pool, hvcs, full, P);
-		swap_next(S, C, Cr, next_pos, accept_pos, P);
+		swap_next(S, C, Ce, Cr, next_pos, accept_pos, P);
 	}
 
 	if(P->dim == 3 && hvcs)
@@ -400,14 +402,14 @@ void branch(Point *cur, Point *end, Point *subset, Point *aux1, Point *S, double
 		removePoint(full, cur_point, 0); // disablePoint(full, cur_point); is superfluous
 
 	if(P->cores > 1 && pool && pool->working() < P->cores && P->best > 0.0 && subset_size > 0){
-		swap_next(S, Cb, Cr, next_pos, ignore_pos, P);
+		swap_next(S, Cb, Ce, Cr, next_pos, ignore_pos, P);
 		pool->schedule(S, subset, Cb, Ce, Cr, hv, ubound1 - Ce[cur_pos], next_pos, subset_size, false);
-		swap_next(S, Cb, Cr, next_pos, ignore_pos, P);
+		swap_next(S, Cb, Ce, Cr, next_pos, ignore_pos, P);
 	}
 	else {
-		swap_next(S, Cb, Cr, next_pos, ignore_pos, P);
+		swap_next(S, Cb, Ce, Cr, next_pos, ignore_pos, P);
 		branch(cur+1, end+0, subset, aux1, S, Cb, Ce, Cr, aux2, false, hv, ubound1 - Ce[cur_pos], id, pool, hvcs, full, P);
-		swap_next(S, Cb, Cr, next_pos, ignore_pos, P);
+		swap_next(S, Cb, Ce, Cr, next_pos, ignore_pos, P);
 	}
 
 	if(P->dim == 3 && full)
@@ -487,7 +489,7 @@ double root(Problem *P){
 		const double hs = hypervolume(aux1, P->n, P->dim, P->ref);
 
 		heuristic(S, aux1, aux2, hs, P);
-		swap_next(S, C, Cr, 0, r, P);
+		swap_next(S, C, Ce, Cr, 0, r, P);
 
 		if(P->cores == 1){
 			hvc_s *hvcs = build(S, subset, aux1, 0, 0, P->n, P->dim, P->ref, false);
@@ -505,7 +507,7 @@ double root(Problem *P){
 			pool.join();
 		}
 
-		swap_next(S, C, Cr, 0, r, P);
+		swap_next(S, C, Ce, Cr, 0, r, P);
 	}
 
 	search_info("end", P, 0);

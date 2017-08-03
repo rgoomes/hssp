@@ -21,7 +21,7 @@ struct File {
 	int output_type; // 0 means no output
 	std::string path; // path to file
 	std::string ref; // ex "0 0 0"
-	std::string problem_type; // "-i" for minimization
+	std::string problem_type; // "-a" for maximization
 };
 
 const std::vector<File> test_files {
