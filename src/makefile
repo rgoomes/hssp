@@ -10,7 +10,7 @@ all:
 	$(MAKE) hvsubset
 
 hvsubset: $(OBJS)
-	$(COMPILER) $(FLAGS) -o hvsubset $(OBJS)
+	$(COMPILER) $(FLAGS) -o hssp $(OBJS)
 
 main.o: main.cpp hssp.h test.h
 	$(COMPILER) $(FLAGS) -c main.cpp

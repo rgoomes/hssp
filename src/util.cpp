@@ -1,8 +1,8 @@
 #include "util.h"
 
-const std::string tryhelp_str = "Try 'hvsubset --help' for more information.\n";
+const std::string tryhelp_str = "Try 'hssp --help' for more information.\n";
 const std::string usage_str =
-	"usage:  hvsubset [OPTION...] [FILE...]\n\n"
+	"usage:  hssp [OPTION...] [FILE]\n\n"
 	"      --help           display this help and exit\n"
 	"  -a  --maximize       use reference point for maximization problem\n"
 	"  -r, --reference R    use R as the reference point (default reference is the origin)\n"
@@ -187,7 +187,7 @@ void clear_memory(Problem *P){
 }
 
 bool ERROR(Problem *P, std::string error_msg = ""){
-	printf("hvsubset: %s", error_msg.c_str());
+	printf("hssp: %s", error_msg.c_str());
 	clear_memory(P);
 	return false;
 }

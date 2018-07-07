@@ -223,7 +223,8 @@ double bound2(double *C, double *aux2, double &hv, int subset_size, int points_l
 
 double bound3(Point *S, Point *subset, Point *aux1, double *C, double *aux2, double hv, int subset_size, int cur_pos, int points_left, Problem *P){
 	Point aux3[P->n];
-	bool selected[P->n]{};
+	bool selected[P->n];
+	std::fill(selected, selected + P->n, false);
 
 	std::copy(C+cur_pos, C+P->n, aux2+cur_pos);
 	std::copy(subset, subset+subset_size, aux3);
